@@ -1,6 +1,34 @@
 // flakes.js
 // the layers of the snowflake
 
+const flakeConstructors = [
+    {
+        name: 'Hex',
+        init: () => new HexFlake(),
+        weight: 0.4
+    },
+    {
+        name: 'Spokes',
+        init: () => new SpokeFlake(),
+        weight: 0.4
+    },
+    {
+        name: 'Center Shape',
+        init: () => new CenterShapeFlake(),
+        weight: 0.4
+    },
+    {
+        name: 'Circles',
+        init: () => new CirclesFlake(),
+        weight: 0.4
+    },
+    {
+        name: 'Spoke Shape',
+        init: () => new SpokeShapeFlake(),
+        weight: 0.4
+    }
+];
+
 class Flake {
     constructor() {
         this.diam = FLAKE_SIZE;
@@ -77,7 +105,6 @@ class SpokeShapeFlake extends Flake {
     }
     render() {
         // draw shapes on the spoke
-        console.log ("spoke shape"); // DEBUG
         noStroke();
         fill(random (this.crayons));
         let shape = random();
