@@ -25,6 +25,6 @@ class Snowflake {
             flake.render();
         });
         pop();
-        console.log (this.flakes);
+        //console.log (this.flakes);
     }
 }

@@ -4,6 +4,8 @@
 const palMITCHIE = [ '#d4e4ff', '#c8f2ff', '#d1fee', '#ffdcfc', '#e0c5ff'];
 const palAW19 = [ '#8C1F28', '#591C21', '#044040', '#D92525', '#F2F2F2'];
 const palDEEP_AUTUMN_1 = [ '#3e2723', '#5e6f64', '#800000', '#cc5500', '#aa7d17' ];
+//CRAYONS = palMITCHIE.slice(0);
+//CRAYONS = palDEEP_AUTUMN_1.slice(0);
 
 // format from coolors.co
 // {"Marian blue":"3d3b8e","Glaucous":"6883ba","Seasalt":"f9f9f9","Thulian pink":"e072a4","Celadon":"b0e298"}
