@@ -1,32 +1,46 @@
 // main routine
-const FLAKE_SIZE = 175;
-const CANVAS_W = 800;
-const CANVAS_H = 600;
-const ROWS = 3
-const COLS = 4
+const FLAKE_SIZE = 100;
+const ROWS = 4
+const COLS = 8
 const PAGE_MARGIN = 30;
+const BUTTON_ROW = 40;
 const GUTTER = 20;
+
+let btnCrayons;  // change the crayon color
 
 let CRAYONS = [];
 let SNOWFLAKES = [];
 let gTestFrame = false; // draw test frame toggle-only works on next paint
+let CRAYON_NAME = "";
 
 function setup() {
     // create the canvas
     var widthCanvas = (COLS * FLAKE_SIZE) + 2*PAGE_MARGIN + ((COLS-1)*GUTTER);
-    var heightCanvas = (ROWS * FLAKE_SIZE) + 2*PAGE_MARGIN + ((ROWS-1)*GUTTER);
+    var heightCanvas = (ROWS * FLAKE_SIZE) + 2*PAGE_MARGIN + ((ROWS-1)*GUTTER) + BUTTON_ROW;
     createCanvas(widthCanvas, heightCanvas);
 
     // get the colors
-    const boxCrayons = cmeGetRandomCanva();
-    CRAYONS = boxCrayons.crayons;
-    console.log ("Crayons = " + boxCrayons.name);
+    random_palette();
 
     // other setup
     angleMode(DEGREES);
     ellipseMode(CENTER);
     rectMode(CENTER);
     noLoop();
+
+    // user interface
+    btnCrayons = createButton('Crayons', 'red');
+    btnCrayons.position (PAGE_MARGIN+GUTTER, PAGE_MARGIN);
+    btnCrayons.mousePressed (random_palette);
+}
+
+function random_palette() {
+    // get the colors
+    const boxCrayons = cmeGetRandomCanva();
+    CRAYONS = boxCrayons.crayons;
+    //console.log ("Crayons = " + boxCrayons.name);
+    CRAYON_NAME = boxCrayons.name;
+    loop();
 }
 
 function draw() {
@@ -36,10 +50,15 @@ function draw() {
     //background(220);
     background ('floralwhite');
 
+    stroke(0);
+    strokeWeight(1);
+    textSize(15);
+    text (CRAYON_NAME,PAGE_MARGIN+GUTTER+100, PAGE_MARGIN);
+
     for (let x=0; x < COLS; x++) {
         for (let y=0; y < ROWS; y++) {
             const posX = PAGE_MARGIN + (x*FLAKE_SIZE + FLAKE_SIZE/2) + (x*GUTTER);
-            const posY = PAGE_MARGIN + (y*FLAKE_SIZE + FLAKE_SIZE/2) + (y*GUTTER);
+            const posY = PAGE_MARGIN + (y*FLAKE_SIZE + FLAKE_SIZE/2) + (y*GUTTER) + BUTTON_ROW;
             SNOWFLAKES.push( new Snowflake(posX, posY) );
         }
     }
@@ -69,6 +88,9 @@ function keyReleased() {
             break;
         default:
             print ("key pressed, value= " + key + " keyCode= " + keyCode);
+            break;
+        case 'p': // palette (duplicate w/button)
+            random_palette();
             break;
     }
 }
