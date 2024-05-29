@@ -5,3 +5,5 @@ Personal projects created in 2024
 | p5Patterns | js | p5.js | Recreations and derivatives of generative-gestaltung.de | 
 | Snowflakes | js | p5.js | Matrix of generative snowflakes and button example |
 | GridPattern | js | p5.js | Matrix of shapes and table reading (Steve's Makerspace) |
+| Tiling | js | p5.js | Experiments with Wang tiles |
+| 05.Buffer | js | p5.js | Offscreen buffer and tinting experiments |
