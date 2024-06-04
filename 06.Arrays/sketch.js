@@ -97,7 +97,6 @@ function experiment() {
     // 02 push x and y
     const szBox = 100; // nominal size of a box (tile)
     let x, y, n;
-    //let xpts = [], ypts=[]; // array of the corners
     let pts = [];
 
     // generate corner matrices
@@ -118,15 +117,29 @@ function experiment() {
     background(random(['MistyRose', 'AliceBlue', 'GhostWhite', 'WhiteSmoke', 'SeaShell', 'Beige', 'OldLace', 'FloralWhite', 'Ivory', 'AntiqueWhite']));
     strokeWeight(8);
     noFill();
-    stroke('blue');
 
     for (y=0; y < boxesPerCol; y++) {
         for (x=0; x < boxesPerRow; x++) {
             n = x+y*(boxesPerRow+1);
+
+            stroke('blue');
             quad (pts[n].x, pts[n].y, pts[n+1].x, pts[n+1].y,
                     pts[n+boxesPerRow+2].x,pts[n+boxesPerRow+2].y,
                     pts[n+boxesPerRow+1].x,pts[n+boxesPerRow+1].y);
 
+            stroke('red');
+            let dent = 15;
+            quad (pts[n].x+dent,               pts[n].y+dent, 
+                  pts[n+1].x-dent,             pts[n+1].y+dent,
+                  pts[n+boxesPerRow+2].x-dent, pts[n+boxesPerRow+2].y-dent,
+                  pts[n+boxesPerRow+1].x+dent, pts[n+boxesPerRow+1].y-dent);
+
+            stroke('yellow');
+            dent += 15;
+            quad (pts[n].x+dent,               pts[n].y+dent, 
+                  pts[n+1].x-dent,             pts[n+1].y+dent,
+                  pts[n+boxesPerRow+2].x-dent, pts[n+boxesPerRow+2].y-dent,
+                  pts[n+boxesPerRow+1].x+dent, pts[n+boxesPerRow+1].y-dent);
         }
     }
     noLoop();
