@@ -7,3 +7,4 @@ Personal projects created in 2024
 | GridPattern | js | p5.js | Matrix of shapes and table reading (Steve's Makerspace) |
 | Tiling | js | p5.js | Experiments with Wang tiles |
 | 05.Buffer | js | p5.js | Offscreen buffer and tinting experiments |
+| 06.Arrays | js | p5.js | Playing around w/arrays |
