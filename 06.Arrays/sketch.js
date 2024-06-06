@@ -210,20 +210,30 @@ function experiment03() {
 }
 
 /***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
-function experiment() {
+function experiment04() {
     // 04 quads a four points elements
+    // drawing some log like scales
     const szBox =  50; // box size
     let x, y, n;
     let boxes = [];
 
-    for (y=szBox/2; y < height-szBox; y+=szBox) {
-        for (x=szBox/2; x < width-szBox; x+=szBox) {
+    let hBox = szBox;
+    let vBox = szBox*0.25;
+    y=height/2; 
+    while (y < height) {
+        hBox = szBox;
+        x=szBox/2;
+        while (x < width) {
             boxes.push({
                 x1: x,       y1: y,
-                x2: x+szBox, y2: y,
-                x3: x+szBox, y3: y+szBox,
-                x4: x,       y4: y+szBox});
+                x2: x+hBox, y2: y,
+                x3: x+hBox, y3: y+vBox,
+                x4: x,       y4: y+vBox});
+            x += hBox;
+            hBox *= 1.25;
         }
+        y+=vBox;
+        vBox *= 1.5;
     }
 
     // draw everything
@@ -237,5 +247,51 @@ function experiment() {
         quad(box.x1,box.y1, box.x2,box.y2, box.x3,box.y3, box.x4,box.y4);
     }
 
+    noLoop();
+}
+
+/***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
+function experiment() {
+    // 05 new perspective
+    const szBox =  50; // box size
+    let x, y, n;
+    let boxes = [];
+    let dy, dx;
+
+    y=height/2; 
+    dy = szBox/5;
+    while (y < height) {
+        dx = 1.25;
+        x=1;
+        while (x < width) {
+            boxes.push({
+                x1: x,       y1: y,
+                x2: x*dx, y2: y,
+                x3: x*dx*dx, y3: y+dy,
+                x4: x*dx,       y4: y+dy});
+            x *= dx;
+            //dx *= 1.25;
+        }
+        y+=dy;
+        dy *= 1.5;
+    }
+
+    // draw everything
+    background(random(['MistyRose', 'AliceBlue', 'GhostWhite', 'WhiteSmoke', 'SeaShell', 'Beige', 'OldLace', 'FloralWhite', 'Ivory', 'AntiqueWhite']));
+    strokeWeight(8);
+    noFill();
+    push();
+    translate(width/2,0);
+
+    stroke('blue');
+    strokeWeight(2);
+    for (box of boxes) {
+        quad(box.x1,box.y1, box.x2,box.y2, box.x3,box.y3, box.x4,box.y4);
+    }
+    for (box of boxes) {
+        quad(-box.x1,box.y1, -box.x2,box.y2, -box.x3,box.y3, -box.x4,box.y4);
+    }
+
+    pop();
     noLoop();
 }
