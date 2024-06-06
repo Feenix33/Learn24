@@ -93,7 +93,9 @@ function experiment01() {
     //print ("Number of points = " + xpts.length);
     noLoop();
 }
-function experiment() {
+
+/***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
+function experiment02() {
     // 02 push x and y
     const szBox = 100; // nominal size of a box (tile)
     let x, y, n;
@@ -142,5 +144,98 @@ function experiment() {
                   pts[n+boxesPerRow+1].x+dent, pts[n+boxesPerRow+1].y-dent);
         }
     }
+    noLoop();
+}
+
+/***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
+function experiment03() {
+    // 03 draw a perspective quilt
+    // didn't do with quads
+    const szBoxTop =  50; // box width at top
+    const szBoxBot = 150; // box width at bottom
+    let x, y, n;
+    let pts = [];
+
+    const nPtsRowH = floor(width/szBoxTop/2) + 1; // max top in horz row halved
+    const nPtsRow = (2*nPtsRowH) + 1;
+    print ('nPtsRowH=' + nPtsRowH);
+    //pts.push({x:0, y:0});
+
+    let delta = szBoxTop;
+    for (x=nPtsRowH*(-delta); x <= nPtsRowH*delta; x += delta) {
+        pts.push({x:x, y:0});
+    }
+    delta = szBoxTop + (szBoxBot - szBoxTop)/2;
+    for (x=nPtsRowH*(-delta); x <= nPtsRowH*delta; x += delta) {
+        pts.push({x:x, y:height/5});
+    }
+    delta = szBoxBot;
+    for (x=nPtsRowH*(-delta); x <= nPtsRowH*delta; x += delta) {
+        pts.push({x:x, y:height/5*2});
+    }
+
+    // draw everything
+    background(random(['MistyRose', 'AliceBlue', 'GhostWhite', 'WhiteSmoke', 'SeaShell', 'Beige', 'OldLace', 'FloralWhite', 'Ivory', 'AntiqueWhite']));
+    strokeWeight(8);
+    noFill();
+
+    push();
+    translate (width/2, height/2);
+
+    stroke('red');
+    strokeWeight(8);
+    for (pt of pts) {
+        point (pt.x, pt.y);
+    }
+
+    strokeWeight(1);
+    for (n=0; n<nPtsRow; n++) {
+        stroke('blue');
+        line (pts[n].x,pts[n].y, pts[n+nPtsRow].x,pts[n+nPtsRow].y);
+        stroke('green');
+        line (pts[n+nPtsRow].x,pts[n+nPtsRow].y, pts[n+nPtsRow*2].x,pts[n+nPtsRow*2].y);
+    }
+
+    //horizontals
+    let w2 = width/2
+    y=0;
+    stroke('orange');
+    while (y < height/2) {
+        line (-w2, y, w2,y);
+        y = (y+1) * 1.5;
+    }
+    pop();
+
+    noLoop();
+}
+
+/***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
+function experiment() {
+    // 04 quads a four points elements
+    const szBox =  50; // box size
+    let x, y, n;
+    let boxes = [];
+
+    for (y=szBox/2; y < height-szBox; y+=szBox) {
+        for (x=szBox/2; x < width-szBox; x+=szBox) {
+            boxes.push({
+                x1: x,       y1: y,
+                x2: x+szBox, y2: y,
+                x3: x+szBox, y3: y+szBox,
+                x4: x,       y4: y+szBox});
+        }
+    }
+
+    // draw everything
+    background(random(['MistyRose', 'AliceBlue', 'GhostWhite', 'WhiteSmoke', 'SeaShell', 'Beige', 'OldLace', 'FloralWhite', 'Ivory', 'AntiqueWhite']));
+    strokeWeight(8);
+    noFill();
+
+    stroke('blue');
+    strokeWeight(2);
+    for (box of boxes) {
+        quad(box.x1,box.y1, box.x2,box.y2, box.x3,box.y3, box.x4,box.y4);
+    }
+
     noLoop();
 }
