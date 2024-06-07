@@ -8,3 +8,4 @@ Personal projects created in 2024
 | Tiling | js | p5.js | Experiments with Wang tiles |
 | 05.Buffer | js | p5.js | Offscreen buffer and tinting experiments |
 | 06.Arrays | js | p5.js | Playing around w/arrays |
+| 07.Arrays | js | p5.js | Wonky circles and meandering lines |
