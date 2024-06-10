@@ -127,7 +127,8 @@ function experiment04() {
 		}
 	}
 }
-function experiment() {
+
+function experiment05() {
 	// 05 clear background
 	const sz=50; // tilesize
 	var x, y, tile;
@@ -151,6 +152,43 @@ function experiment() {
 			pop();
 		}
 	}
+}
+
+function experiment() {
+	// 06 erase
+	const sz=50; // tilesize
+	var x, y, tile;
+	var offScrn = createGraphics(width,height);
+
+	// create the off screen image
+	// draw some random circles
+	for (var n=0; n<40; n++) {
+		offScrn.fill(random(128,255),random(128,255),random(128,255));
+		offScrn.circle(random(width),random(height),random(50,100));
+		offScrn.square(random(width),random(height),random(50,100));
+	}
+
+	offScrn.erase();
+	/**/
+	offScrn.fill('black');
+	for (x=0; x<=width; x+=40) {
+		offScrn.rect(x,0,20,height);
+	}
+	/**/
+	offScrn.noErase();
+	
+	background('orange');
+	/***
+	noStroke();
+	for (x=0; x<=width; x+=sz){
+		for (y=0; y<=height; y+=sz) {
+			push();
+			image(offScrn.get(x,y,sz,sz),x, y);
+			pop();
+		}
+	}
+	***/
+	image(offScrn,0,0);
 }
 
 function draw() {
