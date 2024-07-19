@@ -1,0 +1,9 @@
+ID,Color,R,G,B,Hex
+1,red,255,0,0,#ff0000
+2,green,0,255,0,#00ff00
+3,blue,0,0,255,#0000ff
+4,yellow,255,255,0,#ffff00
+5,cyan,0,255,255,#00ffff
+6,magenta,255,0,255,#ff00ff
+7,black,0,0,0,#000000
+8,white,255,255,255,#ffffff

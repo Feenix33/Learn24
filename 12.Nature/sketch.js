@@ -1,115 +1,109 @@
 // 12 Nature of Code
 // Experiments and exercises from Dan Shipman's Nature of Code
 //
-//for (pt of pts) { }
-//pts.forEach((pt)=> { });
-// ternary operator: let r = (x > b) ? t : f
-// eg = [1, 2, 3...]; res=eg.filter(x => x<99);
+// This is chapter 2.6, all files
+//
 
-//import cmeHelpers;
+////////////////////////////////////////////////////////////////////////////////
+// sketch.js
+// Mutual Attract// The Nature of Code
 
-/***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
-let walker;
-let mover;
-
-/***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
-function preload() {}
+let movers = [];
+let sun;
+const numMovers = 10;
 
 function setup() {
-    // log start time
-    var now = new Date();
-    console.log(
-        "Running @" + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds(),
-    );
-
-    // create the canvas
-    createCanvas(800, 500);
-    //walker = new Walker(200, 200); 
-    //moverA = new Mover (200, 200,1.5,1.5,color(255,0,0));
-    //moverB = new Mover (400, 300,3,20,color(0,0,255));
-    mover = new Mover(200, 200);
-    background('blue');
-    angleMode(DEGREES);
-    colorMode(HSB,360,100,100);
+  createCanvas(1000, 600);
+  for (let i = 0; i < numMovers; i++) {
+    let pos = p5.Vector.random2D();
+    let vel = pos.copy();
+    //vel.setMag(random(10, 15));
+    vel.setMag(random(1, 25));
+    pos.setMag(random(100, 150));
+    vel.rotate(PI / 2);
+    let m = random(10, 15);
+    movers[i] = new Mover(pos.x, pos.y, vel.x, vel.y, m);
+  }
+  //sun = new Mover(0, 0, 0, 0, 500);
+  sun = new Mover(0, 0, 0.1, 0.1, 500);
+  sun.setColor('#ffff00');
+  // movers[0] = new Mover(300, 200, 0, 5, 10);
+  // movers[1] = new Mover(100, 200, 0, -5, 10);
+  // movers[2] = new Mover(200, 300, -5, 0, 10);
+  // movers[3] = new Mover(200, 100, 5, 0, 10);
+  background(0);
 }
-
-
-function keyReleased() {
-    switch (key) {
-        default:
-            print("key pressed, value= " + key + " keyCode= " + keyCode);
-            break;
-    }
-}
-
-/***
-function mousePressed() {
-    console.log ("mouse (" + mouseX + "," + mouseY + ")"); loop();
-    //print (walker.pos.x, walker.pos.y);
-}
-***/
 
 function draw() {
-    //walker.update();
-    //walker.show();
-    //randomVectors();
-    // perlinVectors();
-    background(0);
-    //moverA.target(moverB.pos.x, moverB.pos.y);
-    //moverB.target(moverA.pos.x, moverA.pos.y);
-    //moverA.show();
-    //moverB.show();
+  background(0, 20);
+  translate(width / 2, height / 2);
 
-    if (mouseIsPressed) {
-        let wind = createVector(0.1, 0);
-        mover.applyForce(wind);
+  for (let mover of movers) {
+    sun.attract(mover);
+    for (let other of movers) {
+      if (mover !== other) {
+        mover.attract(other);
+        // stroke(255);
+        // line(mover.pos.x, mover.pos.y, other.pos.x, other.pos.y);
+      }
     }
-    let gravity = createVector(0, 0.2);
-    mover.applyForce(gravity);
+  }
+
+  for (let mover of movers) {
     mover.update();
-    mover.edges();
     mover.show();
+  }
+  sun.update();
+  sun.show();
 }
+////////////////////////////////////////////////////////////////////////////////
+// mover.js
+// Gravitational Attraction
+// The Nature of Code
+// The Coding Train / Daniel Shiffman
+// https://youtu.be/EpgB3cNhKPM
+// https://thecodingtrain.com/learning/nature-of-code/2.5-gravitational-attraction.html
+// https://editor.p5js.org/codingtrain/sketches/MkLraatd
 
-/***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
-function randomVectors() {
-    // draw some random unit vectors
-    translate(width/2, height/2);
-    let v = p5.Vector.random2D();
-    v.mult(random(50,100));
+class Mover {
+  constructor(x, y, vx, vy, m) {
+    this.pos = createVector(x, y);
+    this.vel = createVector(vx, vy);
+    this.acc = createVector(0, 0);
+    this.mass = m;
+    this.r = sqrt(this.mass) * 2;
+    this.clr = '#' + (((1<<24)*Math.random()) | 0).toString(16).padStart(6, 0);
+  }
 
-    strokeWeight(4);
-    stroke('yellow');
-    line(0,0, v.x, v.y);
+  setColor(clr) {
+    this.clr = clr;
+  }
+
+  applyForce(force) {
+    let f = p5.Vector.div(force, this.mass);
+    this.acc.add(f);
+  }
+
+  attract(mover) {
+    let force = p5.Vector.sub(this.pos, mover.pos);
+    let distanceSq = constrain(force.magSq(), 100, 1000);
+    let G = 1;
+    let strength = (G * (this.mass * mover.mass)) / distanceSq;
+    force.setMag(strength);
+    mover.applyForce(force);
+  }
+
+  update() {
+    this.vel.add(this.acc);
+    this.pos.add(this.vel);
+    this.acc.set(0, 0);
+  }
+
+  show() {
+    stroke(this.clr);
+    strokeWeight(2);
+    //fill(255, 100);
+    fill(this.clr);
+    ellipse(this.pos.x, this.pos.y, this.r * 2);
+  }
 }
-
-/***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
-let inc = 0.1;
-let start = 0;
-let ang = 0;
-function perlinVectors() {
-    let xoff = start;
-    let v = createVector(1,1);
-    v.setMag(noise(xoff)*height/4);
-    v.setHeading(ang);
-
-    strokeWeight(1);
-    stroke(color(ang,100,100));
-
-    push();
-    translate(width/4, height/2);
-    line(0,0, v.x, v.y);
-    pop();
-
-    push();
-    translate(3*width/4, height/2);
-    v.setMag(random()*100);
-    //v.setMag(200);
-    line(0,0, v.x, v.y);
-    pop();
-
-    start += inc;
-    ang += 0.2;
-    if (ang > 360.) {ang -= 360.;}
-}
-
