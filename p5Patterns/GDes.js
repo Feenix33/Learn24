@@ -1,4 +1,4 @@
-const cmeProgram = "cmeGenDes020306.js"
+const cmeProgram = "cmeGenDes020306.js";
 // Recreations of Generative Design, Creative Coding on the Web
 // Based on P.2.3.06
 //
@@ -132,7 +132,7 @@ function draw() {
 
         case 0:
           var dex = (x+y) % 16;
-          image(modules[dex], xPos, yPos, xyDim, xyDim);
+          imaßge(modules[dex], xPos, yPos, xyDim, xyDim);
           break;
       }
     }
