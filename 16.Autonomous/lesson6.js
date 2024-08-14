@@ -9,78 +9,7 @@
 // 04 scalar projection
 // 05 simple path follow
 // 06 complex path follow
-// 07 added flow fields and followers
 
-
-/***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
-
-class FlowField {
-  constructor() {
-    this.resolution = 20;
-    this.arrow = this.resolution * 0.45;
-    this.cols = floor(width / this.resolution);
-    this.rows = floor(height / this.resolution);
-    this.field = new Array(this.cols);
-    for (let i = 0; i < this.cols; i++) {
-      this.field[i] = new Array(this.rows);
-    }
-    this.init(0);
-  }
-  init() {
-    noiseSeed(random(10000));
-    let xoff=0;
-    for (let i = 0; i < this.cols; i++) {
-      let yoff=0;
-      for (let j = 0; j < this.rows; j++) {
-        //this.field[i][j] = createVector(-1,1);
-        //this.field[i][j] = p5.Vector.random2D();
-        let angle = map(noise(xoff, yoff), 0, 1, 0, TWO_PI);
-        this.field[i][j] = p5.Vector.fromAngle(angle);
-        yoff+=0.1;
-      }
-      xoff+=0.1;
-    }
-  }
-  render() {
-    stroke(0);
-    strokeWeight(1);
-    let x, y;
-    for (let j = 0; j < this.rows; j++) {
-      y = (this.resolution/2) + j*this.resolution;
-      x = this.resolution / 2;
-      for (let i = 0; i < this.cols; i++) {
-        push();
-        translate(x, y);
-        let v = this.field[i][j]; // not a copy
-
-        /****
-        rectMode(CENTER);
-        stroke('yellow');
-        noFill();
-        strokeWeight(1);
-        rect(0,0,this.resolution, this.resolution);
-        ****/
-
-        rotate(v.heading());
-
-        fill('red'); stroke('red'); circle(0,0,3); // at center
-
-        stroke(0);
-        line(0,0, this.arrow, 0);
-        line(this.arrow-2, 2, this.arrow, 0);
-        line(this.arrow-2,-2, this.arrow, 0);
-        pop();
-
-        x += this.resolution;
-      }
-    }
-  }
-  lookup(pos) {
-    let col = constrain(floor(pos.x / this.resolution), 0, this.cols-1);
-    let row = constrain(floor(pos.y / this.resolution), 0, this.rows-1);
-    return this.field[col][row].copy();
-  }
-}
 
 /***** ***** ***** ***** ***** ***** ***** ***** ***** *****/
 
@@ -139,23 +68,9 @@ class Vehicle {
   }
 
   // A function to deal with path following and separation
-  applyBehaviors(vehicles, path, flow=null, tgt=null) {
+  applyBehaviors(vehicles, path) {
     // Follow path force
-
-    let f;
-    if (path != null) {
-      f = this.follow(path);
-    }
-    else if (flow != null) {
-      // Follow flow field
-      f = this.follow_flow(flow);
-    }
-    else if (tgt != null) {
-      //f = this.follow_tgt(tgt);
-      f = this.follow_tgt(tgt);
-    }
-
-
+    let f = this.follow(path);
     // Separate from other boids force
     let s = this.separate(vehicles);
     // Arbitrary weighting
@@ -175,26 +90,6 @@ class Vehicle {
   run() {
     this.update();
     this.render();
-  }
-
-  follow_tgt(tgt) {
-    let desired = tgt.position;
-    desired.setMag(this.maxspeed);
-
-    let steer = p5.Vector.sub(desired, this.velocity);
-    steer.limit(this.maxforce);
-    //this.applyForce(steer);
-    return steer;
-  }
-
-  follow_flow(flow) {
-    let desired = flow.lookup(this.position);
-    desired.setMag(this.maxspeed);
-
-    let steer = p5.Vector.sub(desired, this.velocity);
-    steer.limit(this.maxforce);
-    //this.applyForce(steer);
-    return steer;
   }
 
   // This function implements Craig Reynolds' path following algorithm
@@ -381,50 +276,30 @@ let path;
 
 // Two vehicles
 let vehicles = [];
-let blewies = [];
 
 function setup() {
   //createCanvas(640, 360);
   createCanvas(800, 600);
-
-  // create the flowfield
-  field = new FlowField();
-
   // Call a function to generate new Path object
   newPath();
 
   // We are now making random vehicles and storing them in an ArrayList
-  for (let i = 0; i < 10; i++) {
-    newVehicle(random(width), random(height), color('green'));
+  for (let i = 0; i < 120; i++) {
+    newVehicle(random(width), random(height));
   }
-  // createP("Hit 'd' to toggle debugging lines.<br/>Click the mouse to generate new vehicles.");
-
+  createP(
+    "Hit 'd' to toggle debugging lines.<br/>Click the mouse to generate new vehicles."
+  );
 }
 
 function draw() {
   background(240);
-
-  // Display the field
-  field.render();
-
   // Display the path
-  // path.display();
-
-  for (let v of blewies) {
-    // Path following and separation are worked on in this function
-    v.applyBehaviors(vehicles, null, field, null);
-    // Call the generic run method (update, borders, display, etc.)
-    v.run();
-  }
+  path.display();
 
   for (let v of vehicles) {
     // Path following and separation are worked on in this function
-    if (blewies.length > 0) {
-      v.applyBehaviors(vehicles, null, null, blewies[0]);
-    }
-    else {
-      v.applyBehaviors(vehicles, path, null);
-    }
+    v.applyBehaviors(vehicles, path);
     // Call the generic run method (update, borders, display, etc.)
     v.run();
   }
@@ -448,18 +323,12 @@ function newVehicle(x, y, clr=null) {
   vehicles.push(new Vehicle(x, y, maxspeed, maxforce, clr));
 }
 
-function newBlewie(x, y, clr=null) {
-  let maxspeed = random(2, 4);
-  let maxforce = 0.3;
-  blewies.push(new Vehicle(x, y, maxspeed, maxforce, clr));
-}
-
 function keyPressed() {
-  if (key == "d") { debug = !debug; }
-  if (key == "l") { print("#vehicles = ",vehicles.length); }
+  if (key == "d") {
+    debug = !debug;
+  }
 }
 
 function mousePressed() {
-  //newVehicle(mouseX, mouseY, color('blue'));
-  newBlewie(mouseX, mouseY, color('blue'));
+  newVehicle(mouseX, mouseY, color('blue'));
 }
