@@ -138,6 +138,22 @@ class Vehicle {
     this.clr = clr ? clr : 128;
   }
 
+  applyForces(f, s) {
+    f.mult(3);
+    s.mult(1);
+    // Accumulate in acceleration
+    this.applyForce(f);
+    this.applyForce(s);
+  }
+
+  applySeeker(vehicles) {
+    // Separate from other boids force
+    let s = this.separate(vehicles);
+    // seek the mouse
+    let f = this.seek(createVector(mouseX, mouseY));
+    this.applyForces(f,s);
+  }
+
   // A function to deal with path following and separation
   applyBehaviors(vehicles, path, flow=null, tgt=null) {
     // Follow path force
@@ -158,12 +174,7 @@ class Vehicle {
 
     // Separate from other boids force
     let s = this.separate(vehicles);
-    // Arbitrary weighting
-    f.mult(3);
-    s.mult(1);
-    // Accumulate in acceleration
-    this.applyForce(f);
-    this.applyForce(s);
+    this.applyForces(f,s);
   }
 
   applyForce(force) {
@@ -405,26 +416,27 @@ function draw() {
   background(240);
 
   // Display the field
-  field.render();
+  //field.render();
 
   // Display the path
   // path.display();
 
+  /*****
   for (let v of blewies) {
     // Path following and separation are worked on in this function
     v.applyBehaviors(vehicles, null, field, null);
     // Call the generic run method (update, borders, display, etc.)
     v.run();
   }
+  *****/
 
   for (let v of vehicles) {
     // Path following and separation are worked on in this function
-    if (blewies.length > 0) {
-      v.applyBehaviors(vehicles, null, null, blewies[0]);
-    }
-    else {
-      v.applyBehaviors(vehicles, path, null);
-    }
+    /***
+    if (blewies.length > 0) { v.applyBehaviors(vehicles, null, null, blewies[0]); }
+    else { v.applyBehaviors(vehicles, path, null); }
+    ***/
+    v.applySeeker(vehicles);
     // Call the generic run method (update, borders, display, etc.)
     v.run();
   }
@@ -460,6 +472,6 @@ function keyPressed() {
 }
 
 function mousePressed() {
-  //newVehicle(mouseX, mouseY, color('blue'));
-  newBlewie(mouseX, mouseY, color('blue'));
+  newVehicle(mouseX, mouseY, color('blue'));
+  //newBlewie(mouseX, mouseY, color('blue'));
 }
